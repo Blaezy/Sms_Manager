@@ -1,5 +1,6 @@
 package com.example.smsmanager;
 
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -10,23 +11,28 @@ import android.os.Bundle;
 import android.telephony.SmsMessage;
 import android.util.Log;
 
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+
 public class SmsReceiver extends BroadcastReceiver {
-private static final String Tag=SmsReceiver.class.getSimpleName();
+private static final String Tag=SmsReceiver.class.getSimpleName();//a string constant TAG for log messages
 
 public SmsReceiver(){
-
 }
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Bundle bundle = intent.getExtras();
+    // Get the SMS message.
+    Bundle bundle = intent.getExtras();
         try
         {
             if(bundle!=null)
             {
                 Object[] pdusObj=(Object[])bundle.get("pdus");
+                //getting all the pdus objects for operation
                 if(pdusObj!=null)
                 {
+
                     for(Object aPdusObj:pdusObj){
                         SmsMessage currentMessage=getIncomingMessage(aPdusObj,bundle);
                         String senderNum=currentMessage.getDisplayOriginatingAddress();
@@ -53,7 +59,7 @@ public SmsReceiver(){
 
     }
 
-    private SmsMessage getIncomingMessage(Object object,Bundle bundle)
+    private SmsMessage getIncomingMessage(Object object, Bundle bundle)
     {
         SmsMessage currentSMS;
         if(Build.VERSION.SDK_INT>=23)
@@ -64,6 +70,7 @@ public SmsReceiver(){
         {
             currentSMS=SmsMessage.createFromPdu((byte[])object);
         }
+        System.out.println(currentSMS.toString());
         return currentSMS;
     }
 }
